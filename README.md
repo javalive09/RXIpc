@@ -1,31 +1,34 @@
 # RxIpc
 
 a lib for IPC bewteen apps(have same signature)
-------
+
 
 ## Feature
 use IPC with one line code
 
 ## Import Library
+both apps need depends library
 ```
 implementation 'com.javalive09.rxipc:rxipc:1.0.4'
 ```
 
 ## Usage
-### 1. add permission
+app A call app B test() need 3 step as follow:
 
+### 1. app A need config permission in AndroidManifest.xml
 ```
-<uses-permission android:name="packagename.permission.IPC"/>
-```
-for example:
-```
+<uses-permission android:name="appBpackagename.permission.IPC"/>
+as: 
 <uses-permission android:name="com.javalive09.ipc.permission.IPC"/>
 ```
-### 2. call method
+### 2. app A call app B test()
 ```
-IPCHelper.call(cxt, getPackageName(), "method", null, null)
+IPCHelper.call(cxt, appBpackagename, "test", null, null)
+as:
+IPCHelper.call(cxt, "com.javalive09.ipc", "test", null, null)
 ```
-### 3. response method
+### 3. app B response 
+implements IMethod interface
 ```
 registerMethod(IMethod method, String... orders)
 unregisterMethod(IMethod method)
