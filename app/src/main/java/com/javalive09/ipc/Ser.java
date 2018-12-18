@@ -1,7 +1,7 @@
 package com.javalive09.ipc;
 
-import com.javalive09.ipclib.IMethod;
-import com.javalive09.ipclib.IPCHelper;
+import com.javalive09.rxipc.IMethod;
+import com.javalive09.rxipc.IPCHelper;
 
 import android.app.Service;
 import android.content.Intent;

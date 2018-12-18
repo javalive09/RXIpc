@@ -1,8 +1,8 @@
 package com.javalive09.rxipc;
 
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
+import io.reactivex.annotations.NonNull;
+import io.reactivex.annotations.Nullable;
 
 /**
  * Created by peter on 2018/12/17
