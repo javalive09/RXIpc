@@ -22,9 +22,9 @@ public class App extends Application {
         IPCHelper.registerMethod(new IMethod() {
             @Override
             public Bundle onCall(@NonNull String s, @Nullable String s1, @Nullable Bundle bundle) {
-                SystemClock.sleep(5000);
+                SystemClock.sleep(3000);
                 Bundle bundle1 = new Bundle();
-                bundle1.putString("abc", "ipc.....");
+                bundle1.putString("abc", "get ipc result");
                 return bundle1;
             }
         }, "ipc-test");
