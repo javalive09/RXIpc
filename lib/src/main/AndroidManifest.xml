@@ -1,0 +1,19 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.javalive09.rxipc">
+
+    <uses-permission android:name="${applicationId}.permission.IPC"/>
+
+    <permission
+            android:name="${applicationId}.permission.IPC"
+            android:protectionLevel="signature"/>
+
+    <application>
+        <provider android:name="com.javalive09.rxipc.IPCHelper"
+                  android:authorities="${applicationId}.ipchelper"
+                  android:permission="${applicationId}.permission.IPC"
+                  android:enabled="true"
+                  android:exported="true"
+        />
+    </application>
+
+</manifest>
