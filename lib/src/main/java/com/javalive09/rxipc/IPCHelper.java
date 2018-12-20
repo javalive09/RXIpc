@@ -24,17 +24,17 @@ import io.reactivex.annotations.Nullable;
  */
 public class IPCHelper extends ContentProvider {
 
-    private static final HashMap<String, IMethod> METHODS = new HashMap<>();
+    private static final HashMap<String, ICallee> METHODS = new HashMap<>();
 
     public static Uri uri(String packageName) {
         String uriStr = "content://" + packageName + ".ipchelper";
         return Uri.parse(uriStr);
     }
 
-    public static void registerMethod(IMethod method, String... orders) {
+    public static void registerCallee(ICallee callee, String... orders) {
         try {
             for (String order : orders) {
-                IMethod iMethod = METHODS.put(order, method);
+                ICallee iMethod = METHODS.put(order, callee);
                 if (iMethod != null) {
                     throw new Exception("you have already register order :" + order + " ! please keep order atomic !!");
                 }
@@ -44,12 +44,12 @@ public class IPCHelper extends ContentProvider {
         }
     }
 
-    public static void unregisterMethod(IMethod method) {
+    public static void unregisterCallee(ICallee callee) {
 
-        Set<Map.Entry<String, IMethod>> entrySet = new HashSet<>(METHODS.entrySet());
+        Set<Map.Entry<String, ICallee>> entrySet = new HashSet<>(METHODS.entrySet());
         List<String> keys = new ArrayList<>();
-        for (Map.Entry<String, IMethod> entry : entrySet) {
-            if (entry.getValue() == method) {
+        for (Map.Entry<String, ICallee> entry : entrySet) {
+            if (entry.getValue() == callee) {
                 keys.add(entry.getKey());
             }
         }
@@ -60,7 +60,7 @@ public class IPCHelper extends ContentProvider {
 
     public static Observable<Bundle> call(final @NonNull Context context,
                                           final @NonNull String packageName,
-                                          final @NonNull String method,
+                                          final @NonNull String order,
                                           final @Nullable String arg,
                                           final @Nullable Bundle extras) {
         return Observable.create(new ObservableOnSubscribe<Bundle>() {
@@ -68,7 +68,7 @@ public class IPCHelper extends ContentProvider {
             public void subscribe(ObservableEmitter<Bundle> emitter) throws Exception {
                 Context appContext = context.getApplicationContext();
                 try {
-                    Bundle bundle = appContext.getContentResolver().call(uri(packageName), method, arg, extras);
+                    Bundle bundle = appContext.getContentResolver().call(uri(packageName), order, arg, extras);
                     emitter.onNext(bundle == null ? new Bundle() : bundle);
                 } catch (Exception e) {
                     emitter.onError(e.getCause());
@@ -82,7 +82,7 @@ public class IPCHelper extends ContentProvider {
     @Nullable
     @Override
     public Bundle call(@NonNull final String method, @Nullable final String arg, @Nullable final Bundle extras) {
-        final IMethod iMethod = METHODS.get(method);
+        final ICallee iMethod = METHODS.get(method);
         if (iMethod != null) {
             return iMethod.onCall(method, arg, extras);
         }

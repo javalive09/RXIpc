@@ -7,8 +7,8 @@ import io.reactivex.annotations.Nullable;
 /**
  * Created by peter on 2018/12/17
  */
-public interface IMethod {
+public interface ICallee {
 
-    Bundle onCall(@NonNull final String method, @Nullable final String arg, @Nullable final Bundle extras);
+    Bundle onCall(@NonNull final String order, @Nullable final String arg, @Nullable final Bundle extras);
 
 }

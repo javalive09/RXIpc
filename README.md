@@ -1,7 +1,6 @@
 # RxIpc
 
-a lib for IPC bewteen apps(have same signature)
-
+a lib for IPC between apps(have same signature)
 
 ## Feature
 use IPC with one line code
@@ -9,29 +8,38 @@ use IPC with one line code
 ## Import Library
 both apps need depends library
 ```
-implementation 'com.javalive09.rxipc:rxipc:1.0.4'
+implementation 'com.javalive09.rxipc:rxipc:1.0.5'
 ```
 
 ## Usage
-app A call app B test() need 3 step as follow:
+app A call app B test() method need 3 step as follow:
 
-### 1. app A need config permission in AndroidManifest.xml
+### 1. app B register Callee
 ```
-<uses-permission android:name="appBpackagename.permission.IPC"/>
-as: 
-<uses-permission android:name="com.javalive09.ipc.permission.IPC"/>
+    IPCHelper.registerCallee(iCallee, "order_test");
+    private ICallee iCallee = new ICallee() {
+        @Override
+        public Bundle onCall(@NonNull String method, @Nullable String arg,
+                             @Nullable Bundle extras) {
+            Bundle bundle = new Bundle();
+            bundle.putString("return", test());
+            return bundle;
+        }
+    };
+    private String test() {
+        return "return ipc test() result"
+    }
+
 ```
-### 2. app A call app B test()
+
+### 2. app A config permission in AndroidManifest.xml
 ```
-IPCHelper.call(cxt, appBpackagename, "test", null, null)
-as:
-IPCHelper.call(cxt, "com.javalive09.ipc", "test", null, null)
+    <uses-permission android:name="appBpackagename.permission.IPC"/>
 ```
-### 3. app B response 
-implements IMethod interface
+
+### 3. app A call app B
 ```
-registerMethod(IMethod method, String... orders)
-unregisterMethod(IMethod method)
+    Observable<Bundle> result = IPCHelper.call(cxt, appBpackagename, "order_test", null, null);
 ```
 
 ## License

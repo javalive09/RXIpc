@@ -1,7 +1,7 @@
 package com.javalive09.ipc;
 
+import com.javalive09.rxipc.ICallee;
 import com.javalive09.rxipc.IPCHelper;
-import com.javalive09.rxipc.IMethod;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,35 +20,40 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     private Disposable disposable;
+    private static final String ORDER_TEST = "order_test";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        IPCHelper.registerMethod(iMethod, "test");
+        IPCHelper.registerCallee(iCallee, ORDER_TEST);
         startService(new Intent(this, Ser.class));
     }
 
-    private IMethod iMethod = new IMethod() {
+    private ICallee iCallee = new ICallee() {
         @Override
         public Bundle onCall(@NonNull String method, @Nullable String arg,
                              @Nullable Bundle extras) {
             SystemClock.sleep(5 * 1000);
             Bundle bundle = new Bundle();
-            bundle.putString("ipc", "ipcStr !!!");
+            bundle.putString("return", test());
             return bundle;
         }
     };
 
+    private String test() {
+        return "test method be invoke";
+    }
+
     public void onClick(View view) {
         setText("...");
         Context cxt = getApplication();
-        disposable = IPCHelper.call(cxt, getPackageName(), "test", null, null)
+        disposable = IPCHelper.call(cxt, getPackageName(), ORDER_TEST, null, null)
                 .subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(
                         new Consumer<Bundle>() {
                             @Override
                             public void accept(Bundle bundle) throws Exception {
-                                String str = bundle.getString("ipc");
+                                String str = bundle.getString("return");
                                 setText(str);
                             }
                         });
@@ -62,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        IPCHelper.unregisterMethod(iMethod);
+        IPCHelper.unregisterCallee(iCallee);
         if (disposable != null && !disposable.isDisposed()) {
             disposable.dispose();
         }
